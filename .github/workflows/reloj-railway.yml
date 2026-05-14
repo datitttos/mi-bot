@@ -2,37 +2,31 @@ name: Reloj de Railway (Apagado/Encendido)
 
 on:
   schedule:
-    - cron: '0 7 * * *'  # Apaga 2 AM (Local UTC-5)
-    - cron: '0 12 * * *' # Enciende 7 AM (Local UTC-5)
+    - cron: '0 7 * * *'
+    - cron: '0 12 * * *'
   workflow_dispatch:
 
 jobs:
   apagar:
-    if: github.event.schedule == '0 7 * * *' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
+    if: github.event.schedule == '0 7 * * *' || github.event_name == 'workflow_dispatch'
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
       - name: Apagar Bot en Railway
         run: |
           npm i -g @railway/cli
-          railway link 0eec1d9b-6cba-408d-9177-571c0fc7bef1
-          railway down -y
+          railway link -p 0eec1d9b-6cba-408d-9177-571c0fc7bef1
+          railway down
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
   encender:
-    if: github.event.schedule == '0 12 * * *' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
+    if: github.event.schedule == '0 12 * * *' || github.event_name == 'workflow_dispatch'
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
       - name: Encender Bot en Railway
         run: |
           npm i -g @railway/cli
-          railway link 0eec1d9b-6cba-408d-9177-571c0fc7bef1
-          railway up --detach
+          railway link -p 0eec1d9b-6cba-408d-9177-571c0fc7bef1
+          railway up -d
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
