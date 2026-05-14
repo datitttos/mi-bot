@@ -1,18 +1,20 @@
 import os
-from flask import Flask
 from threading import Thread
+from http.server import HTTPServer, BaseHTTPRequestHandler
 
-app = Flask(__name__)
-
-@app.route('/')
-def home():
-    return "¡El bot está encendido y Render está feliz!"
+# Un servidor web ultraligero nativo de Python (Sin Flask)
+class SimpleHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+        self.wfile.write(b"Bot encendido y puerto abierto para Render!")
 
 def run():
-    # Toma el puerto dinámico de Render o usa 8080
-    port = int(os.environ.get('PORT', 8080))
-    app.run(host='0.0.0.0', port=port)
+    port = int(os.environ.get('PORT', 10000))
+    server = HTTPServer(('0.0.0.0', port), SimpleHandler)
+    server.serve_forever()
 
 def keep_alive():
-    t = Thread(target=run)
+    t = Thread(target=run, daemon=True)
     t.start()
